@@ -2,7 +2,9 @@
 
 ## stack
 
-- [Go 1.17](https://go.dev/doc/go1.17), [GORM](https://gorm.io/docs/), & [Chi](https://github.com/go-chi/chi)
+- [Go 1.17](https://go.dev/doc/go1.17) and Go's [proverbs](https://go-proverbs.github.io/)
+- [GORM's](https://gorm.io/docs/) developer friendly Go ORM
+- [Chi](https://github.com/go-chi/chi) for composable http routing
 - [Docker](https://docs.docker.com/desktop/) & [Docker Compose](https://docs.docker.com/compose/)
 - Shell
 - [Postgres 10](https://www.postgresql.org/about/news/postgresql-10-released-1786/)
