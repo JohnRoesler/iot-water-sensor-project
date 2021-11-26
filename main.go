@@ -49,7 +49,10 @@ func main() {
 
 	log.Println("server starting")
 	go func() {
-		server.ListenAndServe()
+		err = server.ListenAndServe()
+		if err != nil {
+			log.Printf("error on ListenAndServe() %v", err)
+		}
 	}()
 
 	<-done
@@ -58,7 +61,11 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	server.Shutdown(ctx)
+	err = server.Shutdown(ctx)
+	if err != nil {
+		log.Fatalf("failed to shutdown gracefully %v", err)
+	}
+	log.Println("stopped gracefully")
 }
 
 func handleReading(w http.ResponseWriter, r *http.Request) {
@@ -68,18 +75,27 @@ func handleReading(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("uh oh: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("bad request"))
+		_, err = w.Write([]byte("bad request"))
+		if err != nil {
+			log.Printf("error writing bad request bytes %v", err)
+		}
 		return
 	}
 	err = storeReading(reading)
 	if err != nil {
 		log.Printf("uh oh: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("internal server error"))
+		_, err = w.Write([]byte("internal server error"))
+		if err != nil {
+			log.Printf("error writing internal server error %v", err)
+		}
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(reading)
+	err = json.NewEncoder(w).Encode(reading)
+	if err != nil {
+		log.Printf("error writing json response %v", err)
+	}
 }
 
 func storeReading(reading waterReading) error {
