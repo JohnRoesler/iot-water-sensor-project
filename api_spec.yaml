@@ -1,0 +1,41 @@
+openapi: 3.0.0
+servers:
+  - description: Local API
+    url: http://localhost:8888
+info:
+  description: This is an iot water sensor API server
+  version: "1.0.0"
+  title: IoT Water Sensor
+paths:
+  /:
+    post:
+      summary: record water reading
+      description: Adds a water reading from an iot sensor
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: 'bad request'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaterReading'
+        description: Water reading to record
+components:
+  schemas:
+    WaterReading:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          example: 51300052528
+        symbol:
+          type: string
+          example: dff
+        volume:
+          type: integer
+          example: 300
+        temperature:
+          type: integer
+          example: 300
