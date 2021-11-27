@@ -29,17 +29,25 @@ curl localhost:8888 -v -d '{"timeStamp": 51300052528, "symbol": "dff", "volume":
 
 # script with input csv (populate input.csv with additional data) to mimic many sensors
 ./send_data.sh
+
+# shut things down and clean up
+ctrl+c # if running interactively
+
+docker-compose down # clean up instances
 ```
 
 ## future enhancements
 
 With enough time and if there was a need to build this into a production ready system, I would consider some additional items highlighted below.
 
+- unit and integration tests of course
 - metrics:
   - overall: errors, tps
   - request level: errors by code, per endpoint
 - tracing cost/benefit could be considered and would provide more benefit the more dependencies and interconnections come to be
 - logging w/levels to keep logs to reasonable amount (in general errors only)
-- configuration from files, allow setting any relevant parameters like log level
+- configuration from externally sourced files, allow setting any relevant parameters like log level
 - authentication: ideally oauth
 - replace API with message queue allowing for message processing to take place async with processor retries, DLQ, etc.
+- all components would be run in a container orchestration system e.g. Kubernetes
+- as the application(s) grow it would be broken up appropriately and dependency injection used for testing each component

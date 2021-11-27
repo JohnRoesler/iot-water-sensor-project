@@ -73,7 +73,7 @@ func handleReading(w http.ResponseWriter, r *http.Request) {
 	var reading waterReading
 	err := decoder.Decode(&reading)
 	if err != nil {
-		log.Printf("uh oh: %v\n", err)
+		log.Printf("failed to decode input: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 		_, err = w.Write([]byte("bad request"))
 		if err != nil {
@@ -81,9 +81,9 @@ func handleReading(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	err = storeReading(reading)
+	reading, err = storeReading(reading)
 	if err != nil {
-		log.Printf("uh oh: %v\n", err)
+		log.Printf("failed to store in DB: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err = w.Write([]byte("internal server error"))
 		if err != nil {
@@ -98,12 +98,16 @@ func handleReading(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func storeReading(reading waterReading) error {
+func storeReading(reading waterReading) (waterReading, error) {
 	result := db.Create(&reading)
 	if result.RowsAffected != 1 {
-		return result.Error
+		return waterReading{}, result.Error
 	}
-	return nil
+
+	var record waterReading
+	db.Last(&record)
+
+	return record, nil
 }
 
 type waterReading struct {
